@@ -1,0 +1,34 @@
+flowchart TB
+  user["Сотрудник домена / руководство<br/>Person: отчёты в пределах доступа"]
+  domains["Доменные системы<br/>External systems: клиники, банк, ИИ, ERP<br/>Собственные БД и outbox; бизнес-операции"]
+  partners["Новые партнёры и регионы<br/>External systems: фарма, оборудование<br/>Версионируемые контракты"]
+  idp["Корпоративный IdP<br/>External system: OIDC<br/>Идентификация и группы"]
+  subgraph platform["Software system: платформа данных и самообслуживания, месяц 36"]
+    web["Web-портал<br/>Container: TypeScript / React<br/>Каталог, конструктор, отчёты"]
+    api["API портала<br/>Container: Java / Spring Boot<br/>Доступ, запросы, задания"]
+    registry["Schema Registry<br/>Container: Apicurio<br/>Версии контрактов событий"]
+    events["Аналитические события<br/>Container: Apache Kafka<br/>Только разрешённые проекции"]
+    ingest["Обработчики продуктов доменов<br/>Container: Java / Kafka Streams<br/>Контракты, качество, дедупликация"]
+    marts[("Доменные витрины<br/>Container: ClickHouse<br/>Раздельные базы и роли")]
+    archive[("Архив разрешённых событий<br/>Container: Object Storage<br/>Replay по политике хранения")]
+    catalog["Каталог продуктов<br/>Container: OpenMetadata<br/>Владельцы, схемы, происхождение"]
+    meta[("Метаданные портала<br/>Container: PostgreSQL<br/>Отчёты, политики, задания")]
+    audit["Аудит и наблюдаемость<br/>Container: OTel collector + хранилище<br/>Без значений медицинских полей"]
+  end
+  user -->|HTTPS| web
+  web -->|HTTPS API| api
+  web -->|OIDC login| idp
+  api -->|JWKS / проверка идентичности| idp
+  domains -->|TLS; разрешённые business facts| events
+  partners -->|TLS; согласованные проекции через адаптеры доменов| events
+  domains -->|HTTPS; регистрация схем| registry
+  ingest -->|HTTPS; проверка версии| registry
+  events -->|TLS; consumer groups| ingest
+  ingest -->|SQL/TLS; идемпотентная запись| marts
+  ingest -->|S3/HTTPS; разрешённые события| archive
+  ingest -->|HTTPS; метаданные и lineage| catalog
+  api -->|HTTPS; поиск продукта| catalog
+  api -->|SQL/TLS; ограниченный запрос| marts
+  api -->|SQL/TLS; определения и политики| meta
+  api -->|TLS; решения доступа и действия| audit
+  ingest -->|OTLP/TLS; лаг, ошибки, качество| audit
