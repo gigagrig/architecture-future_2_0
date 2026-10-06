@@ -1,0 +1,75 @@
+{
+  "status": "Preliminary MVP; all amounts are assumptions, not vendor quotes",
+  "unit": "million_RUB_2026",
+  "years": 3,
+  "analyst_hourly_rub": 2500,
+  "current_analyst_hours": [
+    6000,
+    6400,
+    7200
+  ],
+  "target_analyst_hours": [
+    5600,
+    4000,
+    2800
+  ],
+  "current": {
+    "legacy_infrastructure": [
+      18,
+      20,
+      23
+    ],
+    "licenses": [
+      10,
+      11,
+      12
+    ],
+    "operations": [
+      12,
+      13,
+      14
+    ]
+  },
+  "target": {
+    "cloud_infrastructure": [
+      8,
+      14,
+      18
+    ],
+    "legacy_infrastructure": [
+      14,
+      7,
+      2
+    ],
+    "licenses": [
+      9,
+      7,
+      5
+    ],
+    "operations": [
+      14,
+      15,
+      15
+    ],
+    "migration": [
+      10,
+      6,
+      2
+    ],
+    "training": [
+      2,
+      1,
+      1
+    ]
+  },
+  "sensitivity": {
+    "cloud_multiplier": 1.2,
+    "delay_year_index": 1,
+    "delay_cost_additions": {
+      "legacy_infrastructure": 7,
+      "licenses": 2,
+      "migration": 2
+    },
+    "delay_analyst_hours": 1200
+  }
+}
