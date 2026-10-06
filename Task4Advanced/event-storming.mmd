@@ -1,0 +1,38 @@
+flowchart TB
+  register["Команда: зарегистрировать пациента"]:::command
+  patient["Registry / Patient"]:::aggregate
+  registered["PatientRegistered"]:::event
+  registry_policy["Care / Billing<br/>Принять разрешённую регистрацию"]:::policy
+  register --> patient --> registered --> registry_policy
+  finish["Команда: завершить визит"]:::command
+  encounter["Care / Encounter"]:::aggregate
+  completed["VisitCompleted"]:::event
+  issue["Billing: создать счёт по основанию"]:::policy
+  invoice["Billing / Invoice"]:::aggregate
+  issued["InvoiceIssued"]:::event
+  finance["Банковский адаптер<br/>Только при запросе финансирования"]:::policy
+  loan["Banking / LoanAgreement"]:::aggregate
+  created["LoanAgreementCreated<br/>Ещё не оплата"]:::event
+  payment["Banking / Payment<br/>Подтверждённая проводка"]:::aggregate
+  settled["PaymentSettled"]:::event
+  reconcile["Billing: сверить ссылку, сумму, валюту"]:::policy
+  paid["InvoicePaid"]:::event
+  finish --> encounter --> completed --> issue --> invoice --> issued
+  issued --> finance --> loan --> created
+  created -->|Начать расчёт| payment --> settled --> reconcile
+  reconcile -->|Полная оплата; обновить Invoice| paid
+  process["Команда: завершить ИИ-обработку"]:::command
+  research["AI / ResearchJob"]:::aggregate
+  researched["AIResearchCompleted"]:::event
+  result["Care: принять закрытую ссылку<br/>Не отправлять в аналитику"]:::policy
+  process --> research --> researched --> result
+  project["Доменные проекторы<br/>Только разрешённые агрегаты"]:::policy
+  metrics["ClinicCapacityPublished<br/>FinancialSummaryPublished"]:::event
+  marts["Analytics: обновить витрину по версии"]:::policy
+  completed -->|Административный счётчик| project
+  paid -->|Финансовый срез| project
+  project --> metrics --> marts
+  classDef command fill:#dbeafe,stroke:#2563eb,color:#111;
+  classDef aggregate fill:#fef3c7,stroke:#a16207,color:#111;
+  classDef event fill:#ffedd5,stroke:#c2410c,color:#111;
+  classDef policy fill:#ede9fe,stroke:#7c3aed,color:#111;

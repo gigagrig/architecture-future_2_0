@@ -1,0 +1,32 @@
+flowchart TB
+  reg["Patient Registry<br/>Регистрация"]
+  care["Care Delivery<br/>Визиты и закрытые медкарты"]
+  ai["AI Research<br/>Закрытые исследования"]
+  bill["Clinic Billing<br/>Счета и сверка"]
+  bank["Banking<br/>Договоры и проводки"]
+  work["Workforce and Assets<br/>Персонал и мощности"]
+  pharma["Pharma Supply<br/>Поставки"]
+  devices["Medical Devices<br/>Доступность устройств"]
+  projections["Доменные проекторы<br/>Часть контекстов-источников<br/>Allowlist и агрегирование"]
+  analytics["Analytics Products<br/>Каталог и доменные витрины"]
+  identity["Identity and Access<br/>Сотрудники и группы"]
+  legacy["Camel / DWH<br/>Только переходный период"]
+  acl["Антикоррупционные адаптеры<br/>Часть принимающих доменов"]
+  reg -->|Customer-Supplier| care
+  reg -->|Минимальный patient_ref| bill
+  care <-->|Partnership: закрытый протокол| ai
+  care -->|Published Language: основание счёта| bill
+  bank -->|Расчёт; адаптация контракта| bill
+  work -->|Доступная мощность| care
+  devices -->|Технический статус| care
+  care -->|Только загрузка без клинического содержимого| projections
+  ai -->|Только технические счётчики| projections
+  bank -->|Агрегаты портфеля| projections
+  bill -->|Агрегаты выручки| projections
+  work -->|Агрегаты ресурсов| projections
+  pharma -->|Агрегаты запасов| projections
+  devices -->|Агрегаты доступности| projections
+  projections -->|Published Language: аналитические контракты| analytics
+  identity -->|OIDC; полномочия| analytics
+  legacy -.->|Старый формат| acl
+  acl -.->|Поэтапный перенос операций| bill
