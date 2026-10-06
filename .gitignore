@@ -218,3 +218,17 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Terraform runtime files and local credentials
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+site.auto.tfvars
+*.local.tfvars
+*.local.hcl
+credentials/
+*.pem
+*.key

@@ -1,0 +1,6 @@
+# TODO: copy to site.auto.tfvars and replace every placeholder.
+folder_id          = "REPLACE_ME"
+zone               = "ru-central1-a"
+image_id           = "REPLACE_ME"
+subnet_id          = "REPLACE_ME"
+security_group_ids = ["REPLACE_ME"]
