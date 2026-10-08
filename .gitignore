@@ -232,3 +232,6 @@ site.auto.tfvars
 credentials/
 *.pem
 *.key
+log/
+*.gpg
+*.asc

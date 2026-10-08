@@ -1,0 +1,42 @@
+name: Terraform checks
+
+on:
+  push:
+    branches: [develop, main]
+    paths: ['Task1Advanced/**', 'Task2Advanced/**', '.github/workflows/terraform*.yml']
+  pull_request:
+    paths: ['Task1Advanced/**', 'Task2Advanced/**', '.github/workflows/terraform*.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
+        with:
+          terraform_version: 1.11.4
+          terraform_wrapper: false
+      - name: Formatting and shell syntax
+        run: |
+          terraform fmt -check -recursive Task1Advanced
+          terraform fmt -check -recursive Task2Advanced
+          bash -n Task2Advanced/scripts/deploy.sh
+          bash -n Task2Advanced/scripts/recovery.sh
+      - name: Validate all roots without cloud credentials
+        run: |
+          set -euo pipefail
+          for root in Task1Advanced/modules/vm Task1Advanced/envs/dev Task1Advanced/envs/stage Task1Advanced/envs/prod Task2Advanced/terraform; do
+            terraform -chdir="$root" init -backend=false -input=false -lockfile=readonly
+            terraform -chdir="$root" validate
+          done
+      - name: VM module mock tests
+        run: terraform -chdir=Task1Advanced/modules/vm test
+      - name: Deployment and recovery tests
+        run: bash Task2Advanced/tests/test-scripts.sh

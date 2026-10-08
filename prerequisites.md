@@ -44,7 +44,7 @@
 
 ## Удалённое состояние и CI/CD для задания 2
 
-Для текущего MVP выбраны Yandex Object Storage, YDB Serverless с Document API для блокировки state и GitHub Actions. TODO: подготовить bucket, YDB-таблицу и настройки из [README CI/CD](./Task2Advanced/README.md). Шаблон workflow не активирован; облачные проверки отложены. Terraform в этом корне фиксирован на 1.11.4 из-за выбранного механизма блокировки.
+Используются Yandex Object Storage, YDB Serverless с Document API для блокировки state и GitHub Actions. [README CI/CD](./Task2Advanced/README.md) содержит bootstrap dev-backend, настройки GitHub Environments и инструкции запуска. Исполняемые workflow находятся в `.github/workflows`. Terraform в этом корне фиксирован на 1.11.4 из-за выбранного механизма блокировки.
 
 ### S3-совместимое хранилище
 
@@ -86,7 +86,7 @@
 
 ## Что подготовить перед реализацией
 
-- [x] Выбрать провайдера инфраструктуры: Yandex Cloud. Для CI/CD выбран черновик GitHub Actions.
+- [x] Выбрать провайдера инфраструктуры: Yandex Cloud. Для CI/CD используется GitHub Actions.
 - [ ] Подготовить доступ к публичному Git-репозиторию и настройкам pipeline.
 - [ ] Подготовить проект/каталог облака, квоты, бюджет и доступ к API управления ресурсами.
 - [ ] Определить регион, зону, образ ОС, сеть, подсети и параметры трёх сред.

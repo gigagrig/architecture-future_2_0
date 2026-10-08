@@ -1,94 +1,169 @@
 # Управление инфраструктурой через CI/CD
 
-Предварительная версия / MVP. Terraform использует Yandex Object Storage для состояния и YDB Document API для блокировок. GitHub Actions подготовлен как неактивный шаблон. Подключение к облаку, реальные plan/apply и запуск CI/CD не проверялись. TODO: пройти подготовку и проверки ниже перед активацией.
+Terraform создаёт учебную ВМ и отдельный диск данных в Yandex Cloud. Состояние хранится в приватном Yandex Object Storage, а YDB Document API блокирует одновременные изменения. GitHub Actions проверяет код при push/PR; облачные операции запускаются вручную.
 
 ## Документы и реализация
 
-- [Terraform с S3 backend](terraform/main.tf), [входные параметры](terraform/variables.tf), [выходы](terraform/outputs.tf).
-- [Шаблон backend](backend/backend.local.hcl.example).
-- [GitHub Actions workflow](workflow/terraform.yml).
-- Параметры окружений: [dev](envs/dev.tfvars), [stage](envs/stage.tfvars), [prod](envs/prod.tfvars).
-- [Переиспользуемый модуль ВМ](../Task1Advanced/modules/vm/).
+- [Terraform с S3 backend](terraform/main.tf), [переменные](terraform/variables.tf), [выходы](terraform/outputs.tf).
+- [Workflow облачного запуска](../.github/workflows/terraform.yml) и [проверки push/PR](../.github/workflows/terraform-checks.yml).
+- [Запуск init/validate/plan/apply](scripts/deploy.sh), [шифрование аварийных файлов](scripts/recovery.sh).
+- [Первоначальная подготовка dev](scripts/bootstrap.py), [тесты скриптов](tests/test-scripts.sh), [проверка облачного lifecycle](tests/verify-live.py).
+- [Шаблон ручной конфигурации backend](backend/backend.local.hcl.example).
+- Конфигурации [dev](envs/dev.tfvars), [stage](envs/stage.tfvars), [prod](envs/prod.tfvars).
+- [Модуль ВМ](../Task1Advanced/modules/vm/).
 
-## Устройство
+## Устройство и ограничения
 
-Один корневой Terraform-модуль получает окружение и его параметры. Для каждого окружения выделяется собственный ключ `future-2-0/<environment>/terraform.tfstate`. Backend всегда `s3`; локальный backend не предусмотрен. Для изоляции прав рекомендуется отдельный bucket и сервисные аккаунты на среду. Разные ключи в общем bucket сами по себе не обеспечивают разграничение доступа.
+Версии: Terraform 1.11.4, Yandex provider 0.140.1. Блокировка через `dynamodb_table` устаревает в Terraform; версия CLI фиксирована до выбора и проверки замены. YDB используется как реализация DynamoDB-совместимого API, AWS-аккаунт не нужен.
 
-Учётные данные провайдера и backend различаются: авторизованный ключ управляет ВМ, а статический S3-ключ используется для Object Storage и YDB Document API. Последнему аккаунту нужны права на оба сервиса. Блокировка защищает state при запуске из CI и локальной машины; `concurrency` дополнительно сериализует workflow по окружению, не отменяя уже работающий запуск.
+Ключ состояния формируется скриптом из выбранного окружения: `future-2-0/<environment>/terraform.tfstate`. Имя среды одновременно определяет tfvars, имя ВМ и ключ backend. Каждому запуску выделяется собственный каталог `TF_DATA_DIR`; старые настройки другой среды не переиспользуются. Workflow сериализован по окружению, YDB обеспечивает блокировку между CI и локальными запусками.
 
-Версия Terraform фиксирована на 1.11.4. Блокировка через `dynamodb_table` поддерживается этой версией, но помечена устаревающей. TODO: до обновления CLI проверить замену на совместимый механизм; не отключать блокировку ради успешного запуска. Настройка сверена с [инструкцией Yandex Cloud](https://yandex.cloud/en/docs/terraform/tutorials/terraform-state-lock), но её работа в конкретном аккаунте не подтверждена.
+Dev, stage и prod — учебные конфигурации. Для отдельной границы доступа каждой среде нужны собственные backend, сервисные аккаунты и GitHub Environment. Разные ключи в одном bucket предотвращают смешение состояния, но не разграничивают права. Скрипт bootstrap подготавливает только dev.
 
-## Первоначальная подготовка ресурсов
+ВМ не имеет публичного IP. Группа безопасности bootstrap разрешает SSH из своей подсети и исходящий трафик. GitHub runner обращается к облачным API; SSH и доступ в частную сеть для pipeline не требуются. Для интерактивного входа нужен отдельный сетевой маршрут.
 
-TODO: администратору облака подготовить ресурсы до `terraform init`:
+## Первоначальная подготовка dev
 
-1. Создать непубличные buckets для state, включить версионирование и согласовать шифрование, хранение версий и восстановление. Не применять Object Lock ко всем объектам без проверки удаления блокировок.
-2. Создать YDB Serverless и таблицу Document API `terraform-locks` с первичным ключом `LockID` типа String по инструкции провайдера. Обычная YDB SQL-таблица без совместимого Document API не заменяет её.
-3. Выдать аккаунту backend права чтения/записи state, просмотра своего префикса bucket и операций Document API с таблицей блокировок: чтение, создание, удаление записи и описание таблицы. Конкретные IAM-роли и bucket policy нужно проверить администратору. Аккаунту ВМ выдать отдельные права на целевой каталог.
-4. Подготовить существующие subnet, security groups и образ. Создать отдельные credentials для сред, подтвердить доступ runner к API.
-5. Зафиксировать bucket, endpoint YDB и имя таблицы. Они не создаются основным Terraform-корнем: иначе backend зависел бы от ещё не созданной инфраструктуры.
+Нужны существующий учебный каталог, подсеть, активный биллинг и авторизованный ключ администратора этого каталога. Bootstrap используется локально; административный ключ в GitHub не передаётся.
+
+Установить Python 3.10+, `cryptography`, `boto3` в виртуальном окружении (`pip install cryptography boto3`). Запустить сначала проверку, затем создание:
+
+```bash
+python scripts/bootstrap.py --key /secure/admin.json \
+  --folder-id FOLDER_ID --subnet-id SUBNET_ID \
+  --output-dir /secure/future-task2
+python scripts/bootstrap.py --key /secure/admin.json \
+  --folder-id FOLDER_ID --subnet-id SUBNET_ID \
+  --output-dir /secure/future-task2 --apply
+```
+
+Команды выполняются из `Task2Advanced`. Скрипт создаёт:
+
+- сервисный аккаунт deployment с `compute.editor` на учебный каталог;
+- сервисный аккаунт backend с `ydb.editor` на каталог и ACL чтения/записи только своего bucket; общий `admin` аккаунтам CI не назначается;
+- непубличный bucket с версионированием и лимитом 1 GiB;
+- YDB Serverless без оплачиваемой резервированной мощности, с лимитом 10 RU/s, лимитом данных 1 GiB и защитой от удаления;
+- таблицу Document API `terraform-locks`, первичный ключ `LockID` типа String;
+- отдельную группу безопасности и SSH-ключ, выбирает актуальный Ubuntu 24.04 LTS и сохраняет его конкретный image ID.
+
+Ресурсы с выбранным префиксом повторно используются при повторном запуске; ключи не перевыпускаются, если их файлы существуют. Выходной каталог должен быть вне репозитория. В нём сохраняются `resources.json`, `deploy-key.json`, `backend-key.json`, `github-variables.json` и SSH-ключи с закрытыми правами. Защитите каталог и сделайте его резервную копию. При неоднозначной ошибке создания ключа проверьте список ключей в IAM перед повтором.
+
+Bucket и YDB создаются до `terraform init`, вне основного state: они не должны удаляться вместе с учебной ВМ. Не запускайте конфигурации задания 1 и задания 2 для одной ВМ одновременно под разными state.
+
+## Ключ восстановления
+
+На локальной машине создать отдельный GPG-каталог с правами 700 и ключ шифрования. Пример интерактивной команды:
+
+```bash
+mkdir -m 700 /secure/future-task2/recovery-gnupg
+gpg --homedir /secure/future-task2/recovery-gnupg \
+  --quick-generate-key future-task2-recovery rsa3072 encr 1y
+gpg --homedir /secure/future-task2/recovery-gnupg --armor \
+  --output /secure/future-task2/recovery-public.asc --export
+```
+
+Приватная часть остаётся у владельца. В GitHub передаётся только содержимое `recovery-public.asc`. Перед истечением срока ключа обновите публичную переменную и проверьте расшифрование. Bootstrap добавляет публичный ключ в JSON переменных, если файл уже существует рядом с остальными настройками.
 
 ## Настройки GitHub
 
-Создать GitHub Environments `dev`, `stage`, `prod`. Разрешить deployment только из защищённой ветки `develop`; назначить reviewers, отключить обход защиты и самоподтверждение там, где это требуется. Protection rules настраиваются в GitHub, YAML сам их не создаёт. См. [документацию environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).
+В Settings → Environments создать `dev`. В Deployment branches and tags разрешить только `develop`. Для ручного подтверждения после выбора операции достаточно предусмотренного в workflow ввода имени среды. Required reviewers можно добавить, если есть второй участник; при запрете self-review единственный владелец не сможет подтвердить собственный запуск.
 
-| Тип | Имя | Значение |
+| Тип | Имя | Источник значения |
 | --- | --- | --- |
-| Environment secret | `YC_SERVICE_ACCOUNT_KEY_JSON` | JSON авторизованного ключа управления ВМ |
-| Environment secret | `YC_S3_ACCESS_KEY_ID` | ID статического ключа backend |
-| Environment secret | `YC_S3_SECRET_ACCESS_KEY` | Секрет статического ключа backend |
-| Environment variable | `YC_FOLDER_ID`, `YC_ZONE` | Целевой каталог и зона |
-| Environment variable | `YC_IMAGE_ID`, `YC_SUBNET_ID` | Образ и подсеть |
-| Environment variable | `YC_SECURITY_GROUP_IDS` | JSON-массив, например `["enp-example"]` |
+| Environment secret | `YC_SERVICE_ACCOUNT_KEY_JSON` | Полное содержимое `deploy-key.json` |
+| Environment secret | `YC_S3_ACCESS_KEY_ID` | Поле `access_key_id` из `backend-key.json` |
+| Environment secret | `YC_S3_SECRET_ACCESS_KEY` | Поле `secret_access_key` из `backend-key.json` |
+| Environment variables | `YC_FOLDER_ID`, `YC_ZONE`, `YC_IMAGE_ID`, `YC_SUBNET_ID` | Одноимённые поля `github-variables.json` |
+| Environment variable | `YC_SECURITY_GROUP_IDS` | JSON-массив как строка, например `["enp..."]` |
 | Environment variable | `VM_SSH_PUBLIC_KEY` | Полная строка публичного SSH-ключа |
-| Environment variable | `TF_STATE_BUCKET` | Bucket этой среды |
-| Environment variable | `YDB_DOCUMENT_API_ENDPOINT` | Полный HTTPS endpoint Document API |
-| Environment variable | `TF_LOCK_TABLE` | `terraform-locks` или согласованное имя |
-| Repository variable | `CLOUD_MVP_ENABLED` | Оставить отсутствующей/`false`; `true` только после подготовки |
+| Environment variables | `TF_STATE_BUCKET`, `YDB_DOCUMENT_API_ENDPOINT`, `TF_LOCK_TABLE` | Одноимённые поля `github-variables.json` |
+| Environment variable | `TF_RECOVERY_PUBLIC_KEY` | Полное содержимое `recovery-public.asc` |
+| Repository variable | `CLOUD_MVP_ENABLED` | `true` после настройки dev; отсутствие/false блокирует облачный job |
 
-TODO: заменить action tags на проверенные commit SHA перед активацией. Далее скопировать `workflow/terraform.yml` в `.github/workflows/terraform.yml` и включить файл в default branch, чтобы стал доступен `workflow_dispatch`. При запуске выбирать `develop`. Сейчас файла в `.github/workflows` нет: push не активирует workflow.
+GitHub требует файл workflow в default branch для кнопки Run workflow. При default branch `main` файл `.github/workflows/terraform.yml` должен присутствовать и в `main`. Запускать нужно из `develop`, где лежит вся реализация. Публикация только в `develop` запускает проверки push, но не гарантирует доступность ручной кнопки.
 
-## Последовательность pipeline
+Actions закреплены по commit SHA. Workflow проверок push/PR не получает облачные секреты. Облачный workflow не имеет триггеров push/PR и использует только содержимое выбранной ветки `develop`.
 
-1. Оператор вручную выбирает среду и `plan` (по умолчанию) либо `apply`. Job не запускается при выключенном `CLOUD_MVP_ENABLED` или другой ветке.
-2. После прохождения настроенных environment protection rules runner получает секреты. Он проверяет наличие параметров, создаёт временный файл ключа с закрытыми правами, выполняет `fmt`, `init` с удалённым backend и `validate`.
-3. `plan` сохраняется только на временном runner. В summary публикуются commit SHA и количество операций по типам без атрибутов ресурсов. Полные plan, state и logs не загружаются как GitHub artifacts, поскольку репозиторий публичный.
-4. Только при явном выборе `apply` применяется именно бинарный plan, созданный в этом job. В конце удаляются временные файлы ключа, plan и локальный каталог backend. При сбое публикуется краткая ошибка; диагностику выполняют локально с авторизованным доступом.
+## Облачный запуск
 
-Это MVP с подтверждением запуска, а не отдельным утверждением полного plan после его формирования. Предыдущий запуск `plan` не является планом следующего `apply`: он вычисляется заново. TODO перед prod: внедрить закрытое хранение plan, просмотр конкретных изменений и отдельный approval именно этого неизменного plan. До этого использовать workflow только для учебных сред. Нет триггеров push/pull_request и нет передачи облачных секретов коду из внешних PR.
+В Actions → Terraform deployment → Run workflow:
 
-## Локальная проверка без доступов
+1. Выбрать ветку `develop`, environment `dev`, operation `plan`; поле confirm оставить пустым.
+2. Проверить успешный init/validate/plan. В summary видны commit и число изменений по типам.
+3. Для создания повторить запуск с operation `apply` и confirm `dev`.
+4. Для удаления учебной ВМ и обоих дисков выбрать operation `destroy` и confirm `dev`. Bucket, YDB и ключи останутся.
+
+Apply применяет бинарный plan, построенный в том же job. Предыдущий запуск plan не является планом следующего apply. Это ручное разрешение учебного развёртывания, не отдельное утверждение точного plan после его расчёта. Для промышленного использования необходим отдельный процесс просмотра и утверждения конкретного плана.
+
+## Локальный запуск того же pipeline
+
+Нужны Terraform 1.11.4, Bash, jq. Передать через окружение:
+
+```text
+YC_SERVICE_ACCOUNT_KEY_FILE
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+TF_VAR_folder_id
+TF_VAR_zone
+TF_VAR_image_id
+TF_VAR_subnet_id
+TF_VAR_security_group_ids
+TF_VAR_ssh_public_key
+STATE_BUCKET
+LOCK_ENDPOINT
+LOCK_TABLE
+```
+
+Ключи backend соответствуют `YC_S3_*`, остальные значения — переменным GitHub выше. `TF_VAR_environment` и пути state скрипт определяет сам. Не записывайте значения секретов в отслеживаемые env/tfvars.
+
+Из корня репозитория:
 
 ```bash
+bash Task2Advanced/scripts/deploy.sh --environment dev --operation plan
+bash Task2Advanced/scripts/deploy.sh --environment dev --operation apply --confirm dev
+bash Task2Advanced/scripts/deploy.sh --environment dev --operation destroy --confirm dev
+```
+
+В `./log` создаются приватные каталоги запусков (можно заменить через `--logs-dir`). Каждое обращение к Terraform имеет отдельный log, plan хранится там же. Локальные logs, plan и backend metadata не добавляются в Git. Рабочий state находится в Object Storage; локальный файл metadata в `TF_DATA_DIR` не является состоянием ресурсов.
+
+## Сбой backend и восстановление
+
+Перед обращением к облаку CI проверяет шифрование публичным GPG-ключом. При неуспешном запуске шифруются диагностические logs, plan и файлы `*.tfstate*`, включая `errored.tfstate`, если Terraform создал его после отказа записи backend. Приватный ключ провайдера не включается. Публичный GitHub artifact содержит только `terraform-recovery.tar.gz.gpg` и хранится семь дней.
+
+1. Остановить новые apply/destroy; скачать artifact неуспешного run.
+2. На доверенной машине расшифровать:
+   `gpg --homedir /secure/future-task2/recovery-gnupg --output recovery.tar.gz --decrypt terraform-recovery.tar.gz.gpg`.
+3. Распаковать в закрытый каталог, проверить log и выбрать именно `errored.tfstate`. Metadata backend под именем `terraform.tfstate` не подходит.
+4. Восстановить доступ к S3/YDB и инициализировать тот же bucket/key. Сверить lineage/serial, историю версий в bucket и реально существующие ресурсы. Сделать защищённую копию удалённого состояния.
+5. При подтверждённой необходимости выполнить `terraform state push /secure/errored.tfstate` с теми же переменными и `TF_DATA_DIR`, затем `terraform plan`. Не использовать `-force` или `-lock=false` для обхода ошибок.
+6. Принудительно снимать блокировку можно только после проверки отсутствия активного процесса.
+
+Если runner потерян целиком или GitHub недоступен до загрузки artifact, доставка аварийного state не гарантируется: используются последняя версия S3 и сверка/import ресурсов. Версионирование bucket не сохраняет состояние, которое Terraform не смог отправить.
+
+## Проверки
+
+```bash
+terraform fmt -check -recursive Task1Advanced
 terraform fmt -check -recursive Task2Advanced
-terraform -chdir=Task2Advanced/terraform init -backend=false
+terraform -chdir=Task2Advanced/terraform init -backend=false -lockfile=readonly
 terraform -chdir=Task2Advanced/terraform validate
+terraform -chdir=Task1Advanced/modules/vm test
+bash Task2Advanced/tests/test-scripts.sh
 ```
 
-Эти команды не проверяют S3 и YDB. `init -backend=false` используется только для анализа конфигурации; это не разрешение переходить к локальному state при реальном запуске.
+Mock-тесты проверяют модуль без облака. Тесты скриптов проверяют отказ неподтверждённого apply, отсутствие apply в plan, разделение backend по средам, destroy, ошибку записи state и расшифрование аварийного архива. Для проверки реального backend нужны init/plan/apply, чтение объекта состояния и проверка занятой блокировки через YDB. Эти проверки не заменяются разбором YAML.
 
-## TODO: проверка с доступами
-
-1. Скопировать `backend/backend.local.hcl.example` в `backend/backend.local.hcl`; заполнить bucket, endpoint YDB и ключ выбранной среды. Передать `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `YC_SERVICE_ACCOUNT_KEY_FILE`, `TF_VAR_environment`, `TF_VAR_folder_id`, `TF_VAR_zone`, `TF_VAR_image_id`, `TF_VAR_subnet_id`, `TF_VAR_security_group_ids` и `TF_VAR_ssh_public_key` через окружение. Не выводить значения в logs.
-2. Для новой dev-среды выполнить:
+Для отдельной проверки dev без GitHub из корня репозитория:
 
 ```bash
-terraform -chdir=Task2Advanced/terraform init -reconfigure -backend-config=../backend/backend.local.hcl
-terraform -chdir=Task2Advanced/terraform plan -var-file=../envs/dev.tfvars -out=dev.tfplan
-terraform -chdir=Task2Advanced/terraform apply dev.tfplan
+python Task2Advanced/tests/verify-live.py --config-dir /secure/future-task2
+python Task2Advanced/tests/verify-live.py --config-dir /secure/future-task2 --lifecycle
 ```
 
-Для stage/prod изменить backend key, переменные и `.tfvars` согласованно. TODO: сверить эту тройку перед запуском. Если ВМ уже создана демонстрационной конфигурацией, нельзя создавать её повторно под новым state. Сначала остановить изменения, сделать защищённую резервную копию и согласовать перенос state с сохранением resource addresses через отдельную процедуру миграции; простой `-reconfigure` состояние не переносит. В текущем MVP таких развёртываний нет.
-
-3. Проверить появление state в правильном bucket/key и отсутствие рабочего `terraform.tfstate` в корне. При ошибке записи backend Terraform может сохранить аварийный state локально: его нужно защищённо восстановить в backend до новых изменений, а не удалять автоматически.
-
-   TODO до включения облачного apply в CI: реализовать и проверить защищённое сохранение аварийного state с временного runner при отказе S3. Текущий шаблон его не экспортирует, поэтому при завершении runner восстановление может потребовать импорта ресурсов. Это известное ограничение MVP; оставлять `CLOUD_MVP_ENABLED=false` до проверки восстановления.
-4. В тестовой среде проверить два одновременных запуска: второй должен ждать/получить ошибку блокировки. Не использовать `-lock=false`. Освобождать блокировку принудительно можно только после подтверждения отсутствия активного процесса.
-5. Проверить GitHub: `plan` не меняет ресурсы, `apply` требует явного выбора и настроенного reviewer, другая ветка и выключенный флаг блокируют запуск. Проверить, что в публичных logs и artifacts нет содержимого state, plan и секретов.
-6. TODO: приложить обезличенные ссылки на успешные workflow и свидетельства проверки блокировки. Непроверенные пункты пока остаются открытыми.
+Первая команда выполняет только init/plan. Вторая требует пустого dev-state, создаёт платную ВМ, проверяет параметры и state, отсутствие изменений при повторном plan, занятую блокировку и изоляцию stage-plan. После успешного apply она удаляет учебные ресурсы, даже если последующая проверка не прошла. При ошибке самого apply автоматическое удаление не выполняется: сначала нужно проверить частично созданные ресурсы и сохранность state. Значения stage при этой проверке используют тестовый backend dev только для демонстрации разных ключей; отдельная среда требует своих доступов.
 
 ## Источники
 
-- [Состояние Terraform в Yandex Object Storage](https://yandex.cloud/en/docs/terraform/tutorials/terraform-state-storage).
-- [S3 backend и параметры блокировки](https://developer.hashicorp.com/terraform/language/backend/s3).
-- [GitHub Actions concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
+- [Состояние в Object Storage](https://yandex.cloud/ru/docs/terraform/tutorials/terraform-state-storage).
+- [Блокировки через YDB](https://yandex.cloud/ru/docs/terraform/tutorials/terraform-state-lock).
+- [GitHub Environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).
