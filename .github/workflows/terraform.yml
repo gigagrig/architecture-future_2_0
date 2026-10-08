@@ -1,0 +1,115 @@
+name: Terraform deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Учебное окружение
+        required: true
+        type: choice
+        options: [dev, stage, prod]
+        default: dev
+      operation:
+        description: plan, apply или удаление учебных ВМ и дисков
+        required: true
+        type: choice
+        options: [plan, apply, destroy]
+        default: plan
+      confirm:
+        description: Для apply/destroy введите имя выбранного окружения
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-terraform-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  terraform:
+    if: github.ref == 'refs/heads/develop' && vars.CLOUD_MVP_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+    env:
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "false"
+      DEPLOY_ENV: ${{ inputs.environment }}
+      DEPLOY_OPERATION: ${{ inputs.operation }}
+      DEPLOY_CONFIRM: ${{ inputs.confirm }}
+      TF_VAR_folder_id: ${{ vars.YC_FOLDER_ID }}
+      TF_VAR_zone: ${{ vars.YC_ZONE }}
+      TF_VAR_image_id: ${{ vars.YC_IMAGE_ID }}
+      TF_VAR_subnet_id: ${{ vars.YC_SUBNET_ID }}
+      TF_VAR_security_group_ids: ${{ vars.YC_SECURITY_GROUP_IDS }}
+      TF_VAR_ssh_public_key: ${{ vars.VM_SSH_PUBLIC_KEY }}
+      STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+      LOCK_ENDPOINT: ${{ vars.YDB_DOCUMENT_API_ENDPOINT }}
+      LOCK_TABLE: ${{ vars.TF_LOCK_TABLE }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
+        with:
+          terraform_version: 1.11.4
+          terraform_wrapper: false
+      - name: Check operation and recovery encryption before accessing cloud
+        env:
+          RECOVERY_PUBLIC_KEY: ${{ vars.TF_RECOVERY_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ "$DEPLOY_OPERATION" != plan && "$DEPLOY_CONFIRM" != "$DEPLOY_ENV" ]]; then
+            printf 'Confirmation must equal the selected environment.\n'
+            exit 1
+          fi
+          test -n "$RECOVERY_PUBLIC_KEY"
+          umask 077
+          printf '%s' "$RECOVERY_PUBLIC_KEY" > "$RUNNER_TEMP/recovery-public.asc"
+          bash Task2Advanced/scripts/recovery.sh \
+            --public-key "$RUNNER_TEMP/recovery-public.asc" \
+            --output "$RUNNER_TEMP/recovery-check.gpg" \
+            --logs-dir "$RUNNER_TEMP/recovery-tools" --check-only
+      - name: Check formatting
+        run: |
+          terraform fmt -check -recursive Task1Advanced
+          terraform fmt -check -recursive Task2Advanced
+      - name: Run Terraform with remote state
+        id: deploy
+        env:
+          YC_KEY_JSON: ${{ secrets.YC_SERVICE_ACCOUNT_KEY_JSON }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.YC_S3_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_S3_SECRET_ACCESS_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$YC_KEY_JSON"
+          umask 077
+          printf '%s' "$YC_KEY_JSON" > "$RUNNER_TEMP/yc-service-account.json"
+          export YC_SERVICE_ACCOUNT_KEY_FILE="$RUNNER_TEMP/yc-service-account.json"
+          mkdir -p "$RUNNER_TEMP/terraform-runs"
+          bash Task2Advanced/scripts/deploy.sh \
+            --environment "$DEPLOY_ENV" --operation "$DEPLOY_OPERATION" \
+            --confirm "$DEPLOY_CONFIRM" --logs-dir "$RUNNER_TEMP/terraform-runs"
+      - name: Encrypt failed run diagnostics and emergency state
+        if: failure() && steps.deploy.outcome == 'failure'
+        run: |
+          bash Task2Advanced/scripts/recovery.sh \
+            --public-key "$RUNNER_TEMP/recovery-public.asc" \
+            --output "$RUNNER_TEMP/terraform-recovery.tar.gz.gpg" \
+            --logs-dir "$RUNNER_TEMP/recovery-tools" \
+            --source "$RUNNER_TEMP/terraform-runs" --source Task2Advanced/terraform
+      - name: Upload encrypted recovery only
+        if: failure() && steps.deploy.outcome == 'failure'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: terraform-recovery-${{ inputs.environment }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/terraform-recovery.tar.gz.gpg
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Remove temporary provider key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/yc-service-account.json"
