@@ -42,19 +42,27 @@
 
 ## Аналитические события
 
-Источники — доменные проекторы, подписчики — соответствующие витрины Analytics Products. Они читают только разрешённые административные/финансовые данные своего домена. Каждое событие содержит полный пересчитанный срез по ключу, поэтому повторная доставка заменяет версию, а не прибавляет счётчик повторно.
+Источники — доменные проекторы, подписчики — доменные обработчики аналитических продуктов. Они сохраняют разрешённые пачки для загрузки в Iceberg; при необходимости отдельно обновляют потоковую витрину. Проекторы читают только разрешённые административные/финансовые данные своего домена. Каждое событие содержит полный пересчитанный срез по ключу, поэтому повторная доставка заменяет версию, а не прибавляет счётчик повторно.
 
 | Событие | Источник | Семантика / ключ | Минимальный payload v1 |
 | --- | --- | --- | --- |
 | ClinicCapacityPublished | care-delivery | Загрузка клиники за день / clinic_id + period_start | clinic_id:string, period_start:date, period_end:date, available_slots:int>=0, booked_slots:int>=0 |
-| FinancialSummaryPublished | clinic-billing или banking | Срез финансов по организации, дню и валюте | organization_id:string, period_start:date, currency:string, total_minor:int>=0, transaction_count:int>=0 |
+| FinancialSummaryPublished | clinic-billing или banking | Срез конкретного показателя по источнику, организации, дню и валюте | metric_code:string, organization_id:string, period_start:date, currency:string, total_minor:int>=0, transaction_count:int>=0 |
 | AIUsagePublished | ai-research | Техническая загрузка по модели и дню | model_version:string, period_start:date, completed_count:int>=0, processing_seconds:int>=0 |
 | SupplySummaryPublished | pharma-supply | Запас по складу и категории | warehouse_id:string, category_id:string, period_start:date, available_units:int>=0 |
 | DeviceAvailabilitySummaryPublished | medical-devices | Доступность по клинике, типу и дню | clinic_id:string, device_type:string, period_start:date, available_minutes:int>=0 |
 
+Для FinancialSummaryPublished контракт задаёт допустимые metric_code для каждого source, формулу суммы и смысл transaction_count. Ключ включает source, metric_code, organization_id, period_start и currency. Выручка клиники и банковский объём расчётов — разные показатели; продукт головного офиса применяет явные правила исключения двойного учёта.
+
 Нет patient_ref, encounter_ref, study_ref, result_ref, customer_ref, текста медкарты, диагнозов или исследований, в том числе в конверте и технических logs. Маскирование таких полей не заменяет их исключения.
 
 Проектор Care строит загрузку по административному расписанию и доступной мощности из Workforce, не по содержимому медицинских записей. Завершение визита может инициировать пересчёт, но не определяет само по себе число забронированных слотов. Период задан полуинтервалом `[period_start, period_end)` в часовой зоне клиники; ключ среза и период должны совпадать.
+
+## Событие и выпуск продукта
+
+`schema_version` описывает контракт события, `aggregate_version` — версию факта по ключу, `release_id` — проверенный выпуск аналитического продукта. Эти версии не взаимозаменяемы. Имена `*Published` означают публикацию аналитического среза проектором; они не обещают, что этот срез уже доступен пользователю портала.
+
+После записи пачек Airflow запускает преобразование и проверки в Dremio, затем публикует ProductRelease. Для периодического экспорта из legacy действует тот же контракт разрешённых полей и идемпотентности. Airflow не становится подписчиком на каждую операционную команду и не управляет процессом оплаты. Задержка события и задержка готового продукта измеряются отдельно.
 
 ## Доставка, версия и ошибки
 

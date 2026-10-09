@@ -1,5 +1,5 @@
 {
-  "status": "Preliminary MVP; all amounts are assumptions, not vendor quotes",
+  "status": "Lakehouse baseline; all amounts are budget assumptions, not vendor quotes; optional Nessie and ClickHouse excluded",
   "unit": "million_RUB_2026",
   "years": 3,
   "analyst_hourly_rub": 2500,

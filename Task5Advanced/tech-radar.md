@@ -25,8 +25,13 @@
 | Yandex Cloud: VPC, Compute, Object Storage | Adopt | Одобренное облако для сред и хранения |
 | Managed Service for Apache Kafka | Trial | Раздельные операционные и аналитические потоки |
 | Java / Kafka Streams | Trial | Доменные потоковые проекции без отдельного вычислительного кластера |
-| Managed Service for ClickHouse | Trial | Изолированные доменные витрины |
-| Managed PostgreSQL | Trial | Метаданные портала и доменные транзакционные хранилища |
+| Apache Iceberg / Parquet | Trial | Таблицы и файлы доменных продуктов в Object Storage |
+| Dremio + встроенный Open Catalog | Trial | Базовый SQL-движок и технический каталог; проверить поставку, права и S3-совместимость |
+| Apache Airflow / Python | Trial | Доменные DAG загрузки, проверок, публикации и обслуживания; изоляция workers и секретов |
+| Project Nessie + PostgreSQL | Assess | Условная замена базового каталога для веток и согласованной публикации; один каталог на таблицу |
+| Managed Service for ClickHouse | Assess | Условная оперативная витрина, если lakehouse не обеспечивает нужную задержку |
+| MinIO Community | Hold | Не выбирать для нового промышленного контура: репозиторий архивирован, поддержка прекращена |
+| Managed PostgreSQL | Trial | Доменные БД, метаданные портала, состояния Airflow и условного Nessie; раздельные базы и роли |
 | Apicurio Registry | Trial | Реестр схем Kafka |
 | OpenMetadata | Trial | Каталог, владельцы, происхождение, качество |
 | Go | Adopt | Основной язык новых API-сервисов, включая API портала и его компоненты |
@@ -44,8 +49,10 @@
 | SQL Server 2008 / PowerBuilder | Hold | Legacy до переноса операций и архива |
 | Apache Camel как центральная ESB | Hold | Антикоррупционные адаптеры на время миграции |
 
-Слой данных состоит из доменных транзакционных БД, контрактных событий, обработчиков, витрин и разрешённых архивов. Портал работает только с каталогом и витринами. Медицинский ИИ имеет отдельный закрытый контур, не используется как источник содержимого для BI. Это соответствует [целевой архитектуре](../Task3Advanced/architecture.md).
+Слой данных состоит из доменных транзакционных БД, контрактных событий и lakehouse: разрешённые файлы в Object Storage, таблицы Iceberg и SQL-доступ Dremio. Airflow организует выпуск проверенных продуктов. Портал читает опубликованные releases; ClickHouse и Nessie — условные расширения по результатам пилота. OpenMetadata хранит бизнес-описания и не заменяется техническим каталогом таблиц. Медицинский ИИ имеет отдельный закрытый контур, не используется как источник содержимого для BI. Это соответствует [целевой архитектуре](../Task3Advanced/architecture.md).
 
 ## Основания выбора
 
-Принципы Data Mesh: [доменное владение, продуктовый подход, платформа и общие правила](https://martinfowler.com/articles/data-mesh-principles.html). Выбор Kafka и ClickHouse как кандидатов учитывает наличие соответствующих управляемых сервисов в одобренном облаке: [Kafka](https://yandex.cloud/en/docs/managed-kafka/) и [ClickHouse](https://yandex.cloud/en/docs/managed-clickhouse/). Статус Trial означает, что пригодность технологии для проектной нагрузки оценивается на пилоте.
+Принципы Data Mesh: [доменное владение, продуктовый подход, платформа и общие правила](https://martinfowler.com/articles/data-mesh-principles.html). Выбор Kafka и условного ClickHouse учитывает наличие управляемых сервисов в одобренном облаке: [Kafka](https://yandex.cloud/en/docs/managed-kafka/) и [ClickHouse](https://yandex.cloud/en/docs/managed-clickhouse/). Статус Trial означает, что пригодность технологии для проектной нагрузки оценивается на пилоте.
+
+[Dremio](https://docs.dremio.com/current/data-sources/) поддерживает встроенный Open Catalog и внешние каталоги; [подключение Nessie](https://docs.dremio.com/current/data-sources/lakehouse-catalogs/nessie/) допускает S3-совместимое хранилище. [Управление доступом Dremio](https://docs.dremio.com/current/security/rbac/) помечено Enterprise: нельзя считать необходимые политики бесплатными без выбора редакции. [Airflow](https://airflow.apache.org/docs/apache-airflow/stable/index.html) предназначен для конечных пакетных процессов. Статус MinIO основан на [уведомлении официального репозитория](https://github.com/minio/minio); коммерческий AIStor — отдельный продукт, в базовую конфигурацию не включён.
