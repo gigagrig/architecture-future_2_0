@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <svg xmlns="http://www.w3.org/2000/svg" width="2503" height="1048" viewBox="0 0 2503 1048" role="img">
-  <title>C4 L2 — платформа данных: lakehouse и Data Mesh</title>
+  <title>C4 L2 — платформа данных</title>
   <rect width="2503" height="1048" fill="white" />
   <defs>
     <marker id="normal" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
