@@ -1,0 +1,264 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2232" height="1072" viewBox="0 0 2232 1072" role="img">
+  <title>C4 L3 — API портала: запросы к продуктам данных</title>
+  <rect width="2232" height="1072" fill="white" />
+  <defs>
+    <marker id="normal" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+    </marker>
+    <marker id="control" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d" />
+    </marker>
+    <marker id="optional" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309" />
+    </marker>
+  </defs>
+  <rect x="270.0" y="231.0" width="1621.0" height="644.0" rx="8" fill="none" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="6 4" />
+  <text x="278.0" y="257.0" text-anchor="start" font-family="DejaVu Sans, sans-serif" font-size="18" fill="#172554">
+    <tspan x="278.0" y="257.0">API портала — граница контейнера Go; компонентам доступны только опубликованные продукты</tspan>
+  </text>
+  <polyline points="757.800,167.300 756.090,186.990 754.000,211.000 754.000,211.000 754.000,211.000 754.000,223.000 754.000,223.000 754.000,223.000 861.000,231.000 861.000,231.000 861.000,231.000 960.490,279.720 1038.560,317.950" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="1200.300,351.000 1227.400,351.000 1257.400,351.000 1293.700,351.000" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="1156.800,317.780 1205.800,287.020 1271.000,246.000 1271.000,246.000 1271.000,246.000 1580.000,246.000 1580.000,246.000 1580.000,246.000 1635.500,283.570 1686.000,317.780" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="1046.900,384.050 1006.670,406.590 952.460,437.000 902.570,464.980" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="1200.200,378.850 1320.000,412.270 1509.000,465.000 1509.000,465.000 1509.000,465.000 1509.000,545.000 1509.000,545.000 1509.000,545.000 1478.600,582.850 1449.700,618.910" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="1007.720,351.000 958.960,351.000 898.810,351.000 837.640,351.000" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="1370.900,317.950 1311.300,282.710 1224.000,231.000 1224.000,231.000 1224.000,231.000 987.000,223.000 987.000,223.000 987.000,223.000 985.710,196.910 984.240,167.180" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="1752.600,384.240 1777.000,428.850 1818.000,504.000 1818.000,504.000 1818.000,504.000 1818.000,504.000 1818.000,812.000 1818.000,812.000 1753.400,877.550 1705.600,925.960" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="431.670,685.150 365.720,713.670 270.380,754.910 200.830,784.990" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="729.120,464.910 686.520,448.870 647.000,434.000 647.000,434.000 647.000,434.000 647.000,422.000 647.000,422.000 647.000,422.000 1580.000,391.000 1580.000,391.000 1580.000,391.000 1588.200,388.950 1607.700,384.030" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="744.940,545.050 694.970,567.200 632.970,594.700 578.220,618.980" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="957.310,538.060 1046.500,561.050 1151.000,588.000 1151.000,588.000 1151.000,588.000 1224.900,605.060 1302.700,623.000" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="895.200,545.050 947.230,577.710 1013.000,619.000 1013.000,619.000 1013.000,619.000 1137.600,717.750 1213.400,777.820" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="1383.400,618.980 1357.600,598.590 1329.000,576.000 1329.000,576.000 1329.000,576.000 1087.000,545.000 1087.000,545.000 1087.000,545.000 981.000,465.000 981.000,465.000 981.000,465.000 872.000,434.000 872.000,434.000 872.000,434.000 872.000,422.000 872.000,422.000 872.000,422.000 1580.000,391.000 1580.000,391.000 1580.000,391.000 1588.200,388.950 1607.700,384.030" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="1389.200,685.150 1361.600,710.660 1322.900,746.330 1288.800,777.890" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="989.720,621.350 997.400,619.880 1002.000,619.000 1002.000,619.000 1002.000,619.000 1333.000,588.000 1333.000,588.000 1333.000,588.000 1333.000,576.000 1333.000,576.000 1333.000,576.000 1269.000,465.000 1269.000,465.000 1269.000,465.000 949.000,434.000 949.000,434.000 949.000,434.000 949.000,422.000 949.000,422.000 949.000,422.000 1580.000,391.000 1580.000,391.000 1580.000,391.000 1588.200,388.950 1607.700,384.030" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="853.250,685.400 867.180,710.130 884.000,740.000 884.000,740.000 884.000,740.000 1015.340,764.850 1128.500,786.250" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="734.770,618.950 686.100,603.380 638.000,588.000 638.000,588.000 638.000,588.000 594.000,545.000 594.000,545.000 594.000,545.000 594.000,465.000 594.000,465.000 594.000,465.000 629.480,428.220 665.180,391.200" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="769.880,685.050 738.250,700.620 707.000,716.000 707.000,716.000 707.000,716.000 707.000,740.000 707.000,740.000 707.000,740.000 707.920,750.780 709.650,770.910" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="718.100,618.980 604.170,587.780 448.000,545.000 448.000,545.000 448.000,545.000 427.840,447.740 414.700,384.300" fill="none" stroke="#b45309" stroke-width="1.2" marker-end="url(#optional)" stroke-dasharray="5 3" />
+  <polyline points="1346.200,844.040 1413.900,867.580 1505.800,899.526 1581.700,925.909" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="795.730,310.870 877.920,276.190 985.000,231.000 985.000,231.000 985.000,231.000 1066.000,223.000 1066.000,223.000 1066.000,223.000 1119.900,198.870 1175.500,174.010" fill="none" stroke="#15803d" stroke-width="1.2" marker-end="url(#control)" stroke-dasharray="5 3" />
+  <polyline points="713.000,851.130 713.000,871.980 713.000,897.572 713.000,925.671" fill="none" stroke="#475569" stroke-width="1.2" marker-end="url(#normal)" />
+  <polyline points="445.070,317.800 485.650,282.550 545.000,231.000 545.000,231.000 545.000,231.000 1251.000,223.000 1251.000,223.000 1251.000,223.000 1339.900,198.180 1426.400,174.010" fill="none" stroke="#b45309" stroke-width="1.2" marker-end="url(#optional)" stroke-dasharray="5 3" />
+  <rect x="40.0" y="10.0" width="2152.0" height="45.0" rx="0" fill="none" stroke="none" stroke-width="1.3" />
+  <text x="1116.0" y="40.2" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="22" fill="#172554" font-weight="bold">
+    <tspan x="1116.0" y="40.2">C4 L3 — API портала: запросы к продуктам данных</tspan>
+  </text>
+  <rect x="686.9992" y="115.00008" width="146.0016" height="51.99984" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="760.0" y="137.75" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="760.0" y="137.75">Web-портал</tspan>
+    <tspan x="760.0" y="153.35">[Container] React</tspan>
+  </text>
+  <rect x="889.0004" y="115.00008" width="187.9992" height="51.99984" rx="8" fill="#64748b" stroke="#64748b" stroke-width="1.3" />
+  <text x="983.0" y="137.75" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#ffffff">
+    <tspan x="983.0" y="137.75">IdP</tspan>
+    <tspan x="983.0" y="153.35">[Software System] OIDC</tspan>
+  </text>
+  <rect x="40.0004" y="785.00008" width="205.9992" height="51.99984" rx="8" fill="#ede9fe" stroke="#64748b" stroke-width="1.3" />
+  <text x="143.0" y="807.75" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="143.0" y="807.75">Каталог продуктов</tspan>
+    <tspan x="143.0" y="823.35">[Container] OpenMetadata</tspan>
+  </text>
+  <rect x="1417.0016" y="107.99987999999999" width="247.9968" height="66.00024" rx="8" fill="#ede9fe" stroke="#b45309" stroke-width="1.3" stroke-dasharray="6 4" />
+  <text x="1541.0" y="129.95000000000002" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="1541.0" y="129.95000000000002">Оперативные витрины — опция</tspan>
+    <tspan x="1541.0" y="145.55">[Container] ClickHouse</tspan>
+    <tspan x="1541.0" y="161.15">По результатам пилота</tspan>
+  </text>
+  <rect x="1544.5008" y="925.99988" width="258.9984" height="66.00024" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="1674.0" y="947.9499999999999" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="1674.0" y="947.9499999999999">Метаданные портала</tspan>
+    <tspan x="1674.0" y="963.55">[Container] PostgreSQL</tspan>
+    <tspan x="1674.0" y="979.15">Задания и разрешённые releases</tspan>
+  </text>
+  <rect x="1124.4992" y="107.99987999999999" width="245.0016" height="66.00024" rx="8" fill="#dcfce7" stroke="#64748b" stroke-width="1.3" />
+  <text x="1247.0" y="129.95000000000002" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="1247.0" y="129.95000000000002">Журнал аудита</tspan>
+    <tspan x="1247.0" y="145.55">[Container: PostgreSQL]</tspan>
+    <tspan x="1247.0" y="161.15">Неизменяемые записи доступа</tspan>
+  </text>
+  <rect x="576.9992" y="925.99988" width="272.0016" height="66.00024" rx="8" fill="#ede9fe" stroke="#64748b" stroke-width="1.3" />
+  <text x="713.0" y="947.9499999999999" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="713.0" y="947.9499999999999">Аналитический SQL</tspan>
+    <tspan x="713.0" y="963.55">[Container] Dremio</tspan>
+    <tspan x="713.0" y="979.15">Опубликованные Iceberg-продукты</tspan>
+  </text>
+  <rect x="1007.9988" y="317.99987999999996" width="192.0024" height="66.00024" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="1104.0" y="339.94999999999993" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="1104.0" y="339.94999999999993">HTTP Controller</tspan>
+    <tspan x="1104.0" y="355.54999999999995">[Component] REST</tspan>
+    <tspan x="1104.0" y="371.1499999999999">Входные DTO и лимиты</tspan>
+  </text>
+  <rect x="1293.9996" y="317.99987999999996" width="262.0008" height="66.00024" rx="8" fill="#dcfce7" stroke="#64748b" stroke-width="1.3" />
+  <text x="1425.0" y="339.94999999999993" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="1425.0" y="339.94999999999993">Identity Adapter</tspan>
+    <tspan x="1425.0" y="355.54999999999995">[Component] OIDC/JWT</tspan>
+    <tspan x="1425.0" y="371.1499999999999">Проверка подписи, срока и групп</tspan>
+  </text>
+  <rect x="1603.4992" y="317.99987999999996" width="263.0016" height="66.00024" rx="8" fill="#dcfce7" stroke="#64748b" stroke-width="1.3" />
+  <text x="1735.0" y="339.94999999999993" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="1735.0" y="339.94999999999993">Access Policy</tspan>
+    <tspan x="1735.0" y="355.54999999999995">[Component] Go</tspan>
+    <tspan x="1735.0" y="371.1499999999999">Домен, регион, строки и столбцы</tspan>
+  </text>
+  <rect x="380.5004" y="618.99988" width="250.9992" height="66.00024" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="506.0" y="640.9499999999999" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="506.0" y="640.9499999999999">Product Catalog Adapter</tspan>
+    <tspan x="506.0" y="656.55">[Component] HTTPS client</tspan>
+    <tspan x="506.0" y="672.15">Версии и доступность продукта</tspan>
+  </text>
+  <rect x="709.0016" y="465.0004" width="247.9968" height="79.9992" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="833.0" y="486.15000000000003" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="833.0" y="486.15000000000003">Query Planner</tspan>
+    <tspan x="833.0" y="501.75000000000006">[Component] Go</tspan>
+    <tspan x="833.0" y="517.35">Разрешённая модель + версия;</tspan>
+    <tspan x="833.0" y="532.95">выбор Dremio или витрины</tspan>
+  </text>
+  <rect x="1303.0004" y="618.99988" width="241.9992" height="66.00024" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="1424.0" y="640.9499999999999" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="1424.0" y="640.9499999999999">Report Job Service</tspan>
+    <tspan x="1424.0" y="656.55">[Component] Go</tspan>
+    <tspan x="1424.0" y="672.15">Очередь заданий в PostgreSQL</tspan>
+  </text>
+  <rect x="680.4988000000001" y="618.99988" width="309.00239999999997" height="66.00024" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="835.0" y="640.9499999999999" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="835.0" y="640.9499999999999">Report Worker</tspan>
+    <tspan x="835.0" y="656.55">[Component] Go</tspan>
+    <tspan x="835.0" y="672.15">Повторная проверка прав и выполнение</tspan>
+  </text>
+  <rect x="1128.5004" y="777.99988" width="250.9992" height="66.00024" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="1254.0" y="799.9499999999999" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="1254.0" y="799.9499999999999">Report Repository</tspan>
+    <tspan x="1254.0" y="815.55">[Component] Go / SQL</tspan>
+    <tspan x="1254.0" y="831.15">Определения, задания, releases</tspan>
+  </text>
+  <rect x="568.5004" y="311.0004" width="268.9992" height="79.9992" rx="8" fill="#dcfce7" stroke="#64748b" stroke-width="1.3" />
+  <text x="703.0" y="332.15000000000003" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="703.0" y="332.15000000000003">Audit Writer</tspan>
+    <tspan x="703.0" y="347.75000000000006">[Component: SQL client]</tspan>
+    <tspan x="703.0" y="363.35">Запись решения и результата;</tspan>
+    <tspan x="703.0" y="378.95000000000005">ожидание подтверждения commit</tspan>
+  </text>
+  <rect x="585.9992" y="771.0004" width="254.0016" height="79.9992" rx="8" fill="#dceeff" stroke="#64748b" stroke-width="1.3" />
+  <text x="713.0" y="792.15" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="713.0" y="792.15">Dremio Query Adapter</tspan>
+    <tspan x="713.0" y="807.75">[Component] Go / HTTPS</tspan>
+    <tspan x="713.0" y="823.35">SQL-задание, статус, результат;</tspan>
+    <tspan x="713.0" y="838.9499999999999">роль домена и версия продукта</tspan>
+  </text>
+  <rect x="294.4992" y="317.99987999999996" width="227.0016" height="66.00024" rx="8" fill="#dceeff" stroke="#b45309" stroke-width="1.3" stroke-dasharray="6 4" />
+  <text x="408.0" y="339.94999999999993" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#172554">
+    <tspan x="408.0" y="339.94999999999993">Fast Mart Adapter — опция</tspan>
+    <tspan x="408.0" y="355.54999999999995">[Component] Go / SQL</tspan>
+    <tspan x="408.0" y="371.1499999999999">Доступ к потоковой витрине</tspan>
+  </text>
+  <rect x="1703.0" y="90.80000000000001" width="498.0" height="100.39999999999999" rx="8" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1952.0" y="109.2" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#172554">
+    <tspan x="1952.0" y="109.2">Цвет: серый — внешняя система; голубой — приложение / компонент;</tspan>
+    <tspan x="1952.0" y="123.6">фиолетовый — аналитика; зелёный — доступ, аудит или проверки.</tspan>
+    <tspan x="1952.0" y="138.0">Стрелка: инициатор → получатель; ответ подразумевается.</tspan>
+    <tspan x="1952.0" y="152.4">Зелёный пунктир — доступ / аудит; оранжевый — опциональная связь.</tspan>
+    <tspan x="1952.0" y="166.8">Оранжевая рамка — опциональный элемент; пунктирная серая — граница.</tspan>
+    <tspan x="1952.0" y="181.2">Медкарты, истории болезней и результаты исследований исключены.</tspan>
+  </text>
+  <rect x="746.5" y="203.40000000000006" width="196.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="844.5" y="220.85000000000005" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="844.5" y="220.85000000000005">HTTPS; конструктор или отчёт</tspan>
+  </text>
+  <rect x="1228.5" y="328.4" width="37.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1247.0" y="345.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1247.0" y="345.85">JWT</tspan>
+  </text>
+  <rect x="1410.0" y="203.4" width="154.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1487.0" y="220.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1487.0" y="220.85">Контекст пользователя</tspan>
+  </text>
+  <rect x="968.5" y="414.4" width="139.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1038.0" y="431.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1038.0" y="431.85">Проверенный запрос</tspan>
+  </text>
+  <rect x="1502.5" y="484.8" width="168.0" height="40.4" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1586.5" y="502.25" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1586.5" y="502.25">Проверить владельца при</tspan>
+    <tspan x="1586.5" y="515.45">выдаче</tspan>
+  </text>
+  <rect x="853.75" y="328.4" width="138.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="922.75" y="345.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="922.75" y="345.85">Действие и решение</tspan>
+  </text>
+  <rect x="979.0" y="203.39999999999998" width="88.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1023.0" y="220.84999999999997" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1023.0" y="220.84999999999997">HTTPS; JWKS</tspan>
+  </text>
+  <rect x="1810.5" y="638.4" width="168.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1894.5" y="655.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1894.5" y="655.85">SQL; актуальные правила</tspan>
+  </text>
+  <rect x="349.0" y="714.4000000000001" width="52.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="375.0" y="731.8500000000001" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="375.0" y="731.8500000000001">HTTPS</tspan>
+  </text>
+  <rect x="637.5" y="414.4" width="213.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="744.0" y="431.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="744.0" y="431.85">Проверка каждого набора полей</tspan>
+  </text>
+  <rect x="660.5" y="568.4" width="113.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="717.0" y="585.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="717.0" y="585.85">Схема продукта</tspan>
+  </text>
+  <rect x="1143.0" y="568.4" width="187.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1236.5" y="585.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1236.5" y="585.85">Задание с версией продукта</tspan>
+  </text>
+  <rect x="1085.0" y="638.4" width="188.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1179.0" y="655.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1179.0" y="655.85">Читает разрешённый release</tspan>
+  </text>
+  <rect x="1080.5" y="491.4" width="188.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1174.5" y="508.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1174.5" y="508.85">Права на момент скачивания</tspan>
+  </text>
+  <rect x="1347.0" y="714.4000000000001" width="122.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1408.0" y="731.8500000000001" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1408.0" y="731.8500000000001">Записать задание</tspan>
+  </text>
+  <rect x="1307.5" y="491.4" width="191.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1403.0" y="508.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1403.0" y="508.85">Права на момент выполнения</tspan>
+  </text>
+  <rect x="877.4999999999999" y="714.4" width="201.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="977.9999999999999" y="731.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="977.9999999999999" y="731.85">Получить и завершить задание</tspan>
+  </text>
+  <rect x="586.0" y="491.4" width="108.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="640.0" y="508.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="640.0" y="508.85">Статус и объём</tspan>
+  </text>
+  <rect x="699.5000000000001" y="707.8" width="140.0" height="40.4" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="769.5000000000001" y="725.25" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="769.5000000000001" y="725.25">Выполнить план</tspan>
+    <tspan x="769.5000000000001" y="738.45">после проверки прав</tspan>
+  </text>
+  <rect x="441.50000000000006" y="484.8" width="148.0" height="40.4" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="515.5" y="502.25" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="515.5" y="502.25">Маршрут оперативной</tspan>
+    <tspan x="515.5" y="515.45">витрины</tspan>
+  </text>
+  <rect x="1481.0" y="875.4" width="62.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1512.0" y="892.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1512.0" y="892.85">SQL/TLS</tspan>
+  </text>
+  <rect x="1082.5" y="203.40000000000003" width="167.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1166.0" y="220.85000000000002" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1166.0" y="220.85000000000002">SQL/TLS; INSERT и commit</tspan>
+  </text>
+  <rect x="703.5" y="875.4" width="155.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="781.0" y="892.85" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="781.0" y="892.85">HTTPS; SQL / job / result</tspan>
+  </text>
+  <rect x="1285.0" y="203.39999999999998" width="111.0" height="27.2" rx="0" fill="#ffffff" stroke="none" stroke-width="1.3" />
+  <text x="1340.5" y="220.84999999999997" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#172554">
+    <tspan x="1340.5" y="220.84999999999997">SQL/TLS; чтение</tspan>
+  </text>
+</svg>

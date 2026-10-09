@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Test double: never connects to Terraform or cloud APIs.
+set -euo pipefail
+[[ "${1:-}" != -h && "${1:-}" != --help ]] || { printf 'Terraform test double; records commands in FAKE_TERRAFORM_TRACE.\n'; exit 0; }
+[[ "${1:-}" != -chdir=* ]] || shift
+printf '%s\n' "$*" >>"$FAKE_TERRAFORM_TRACE"
+case "$1" in
+  version) printf '{"terraform_version":"1.11.4"}\n' ;;
+  show) printf '{"resource_changes":[{"change":{"actions":["create"],"after":{"secret":"PRIVATE_SENTINEL"}}}]}\n' ;;
+  plan)
+    for arg in "$@"; do
+      if [[ "$arg" == -out=* ]]; then printf 'PRIVATE_SENTINEL\n' >"${arg#-out=}"; fi
+    done
+    printf 'PRIVATE_SENTINEL\n' ;;
+  apply)
+    if [[ "${FAKE_APPLY_FAIL:-false}" == true ]]; then
+      mkdir -p "$TF_DATA_DIR"
+      printf '{"serial":7,"test":"PRIVATE_SENTINEL"}\n' >"$TF_DATA_DIR/errored.tfstate"
+      printf 'PRIVATE_SENTINEL failed backend write\n'
+      exit 1
+    fi ;;
+esac

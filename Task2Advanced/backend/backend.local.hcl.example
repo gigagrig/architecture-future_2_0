@@ -1,0 +1,8 @@
+# TODO: use a separate bucket/account per environment where possible.
+bucket = "REPLACE_ME"
+key    = "future-2-0/dev/terraform.tfstate"
+endpoints = {
+  s3       = "https://storage.yandexcloud.net"
+  dynamodb = "https://docapi.serverless.yandexcloud.net/REPLACE_ME"
+}
+dynamodb_table = "terraform-locks"
