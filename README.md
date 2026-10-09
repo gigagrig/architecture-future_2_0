@@ -4,7 +4,6 @@
 
 ## Документы и реализация
 
-- [Условие спринта 11](sprint-11-assignment.md).
 - [Ресурсы, зависимости и доступы](prerequisites.md).
 - [Модуль ВМ и окружения](Task1Advanced/README.md).
 - [Удалённое состояние и CI/CD](Task2Advanced/README.md).
