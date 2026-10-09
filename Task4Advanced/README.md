@@ -15,7 +15,7 @@
 
 ![Команды, агрегаты, события и реакции](diagrams/event-storming.svg)
 
-## Проверка и экспорт
+## Генерация схем
 
 Схемы экспортируются Mermaid CLI 11.4.2 с [конфигурацией](mermaid-config.json). Из корня проекта:
 
@@ -24,4 +24,3 @@ mmdc -i Task4Advanced/bounded-contexts.mmd -o Task4Advanced/diagrams/bounded-con
 mmdc -i Task4Advanced/event-storming.mmd -o Task4Advanced/diagrams/event-storming.svg -c Task4Advanced/mermaid-config.json -b white
 ```
 
-Контракт проверяется валидатором JSON Schema Draft 2020-12 с проверкой `format`. Синтетический пример не содержит данных реальных пациентов.

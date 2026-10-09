@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net" version="24.7.5">
-  <diagram id="c4-containers" name="C4 L2 — платформа данных: lakehouse и Data Mesh">
+  <diagram id="c4-containers" name="C4 L2 — платформа данных">
     <mxGraphModel grid="1" gridSize="10" page="1" pageWidth="2503" pageHeight="1048">
       <root>
         <mxCell id="0" />
